@@ -1,6 +1,4 @@
 import csv
-import threading
-import time
 
 
 # Split a recipe name into a list of words
@@ -11,13 +9,6 @@ def recipe_words(recipe_name):
 # Format a name correctly
 def format_recipe_name(recipe_name):
     return ' '.join(recipe_words(recipe_name))
-
-
-def progress_bar(iteration, total, length = 100):
-    percent = ("{0:." + str(0) + "f}").format(100 * (iteration / float(total)))
-    filled_length = int(length * iteration // total)
-    bar = '█' * filled_length + '-' * (length - filled_length)
-    print('\r', bar, percent, '%', end='')
 
 
 class RecipeData:
@@ -119,12 +110,6 @@ class Stream:
         return self
 
 
-def progress(i):
-    while not i[1]:
-        progress_bar(i[0], 231637)
-        time.sleep(0.01)
-
-
 class DataParser:
     filename = "RAW_recipes.csv"
 
@@ -136,54 +121,19 @@ class DataParser:
         else:
             self.recipes = recipe_list
 
-    @staticmethod
-    def format_pair():
-        i = [0, False]
-
-        thread = threading.Thread(target=progress, args=(i,), daemon=True)
-
-        with open(DataParser.filename, 'r', encoding='utf-8-sig') as file:
-            reader = csv.reader(file)
-
-            next(reader)
-
-            thread.start()
-
-            r1 = []
-            r2 = []
-
-            for row in reader:
-                r1.append(RecipeData(row[0], row[10][1:-1].replace("'", "").split(', '),
-                                     row[8][1:-1].replace("'", "").split(', '), row[9]))
-                r2.append(RecipeData(row[0], row[10], row[8][1:-1].replace("'", "").split(', '), row[9]))
-                i[0] += 1
-
-            i[1] = True
-
-            thread.join()
-
-            print('', end='\r', flush=True)
-            return DataParser(True, r1), DataParser(False, r2)
-
     def _read(self, strict):
         with open(DataParser.filename, 'r', encoding='utf-8-sig') as file:
             reader = csv.reader(file)
 
             next(reader)
 
-            i = 0
-
             # Get rows
             if strict:
                 for row in reader:
                     self.recipes.append(RecipeData(row[0], row[10][1:-1].replace("'", "").split(', '), row[8][1:-1].replace("'", "").split(', '), row[9]))
-                    i += 1
-                    progress_bar(i, 463274)
             else:
                 for row in reader:
                     self.recipes.append(RecipeData(row[0], row[10], row[8][1:-1].replace("'", "").split(', '), row[9]))
-                    i += 1
-                    progress_bar(i + 231637, 463274)
 
     def recipe_search_exact(self, recipe_name):
         return SearchFunctions.exact(self.recipes, recipe_name)
