@@ -5,10 +5,14 @@ import itertools
 
 
 class Graph:
-    def __init__(self):
+    def __init__(self, data=None):
         self.thread = threading.Thread(target=self._make_graph, daemon=True)
 
-        self.data = DataParser(True)
+        if data is None:
+            self.data = DataParser(True)
+        else:
+            self.data = data
+
         self.nodes = defaultdict(dict)
 
         self.thread.start()
