@@ -112,12 +112,12 @@ screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 
 # Set the window size as a fraction of the screen size
-window_width = int(screen_width * 0.8)  # 80% of screen width
-window_height = int(screen_height * 0.6)  # 60% of screen height
+window_width = int(screen_width * 0.625)
+window_height = int(screen_height * 0.75)
 
 # Center the window on the screen
-x_position = (screen_width - window_width) // 2
-y_position = (screen_height - window_height) // 2
+x_position = (screen_width - window_width)
+y_position = (screen_height - window_height)
 
 
 root.iconbitmap('images/favicon.ico')
