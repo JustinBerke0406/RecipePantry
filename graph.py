@@ -1,17 +1,13 @@
-from dataparser import *
+from dataparser_extra import RecipeData
 from collections import defaultdict
 import threading
 import itertools
+import csv
 
 
 class Graph:
-    def __init__(self, data=None):
+    def __init__(self):
         self.thread = threading.Thread(target=self._make_graph, daemon=True)
-
-        if data is None:
-            self.data = DataParser(True)
-        else:
-            self.data = data
 
         self.nodes = defaultdict(dict)
 
@@ -21,17 +17,23 @@ class Graph:
         return self.completed/self.total
 
     def _make_graph(self):
-        self.total = len(self.data.recipes)
-        self.completed = 0
+        self.total = 231637 # len(self.data.recipes)
+        with open("RAW_recipes.csv", 'r', encoding='utf-8-sig') as file:
+            reader = csv.reader(file)
 
-        for recipe in self.data.recipes:
-            ingredients = recipe.ingredients
-            self.completed += 1
-            for ingredient in ingredients:
-                remaining = ingredients[:]
-                remaining.remove(ingredient)
-                for ingredient_to in remaining:
-                    self.nodes[ingredient].setdefault(ingredient_to, set()).add(recipe)
+            next(reader)
+
+            self.completed = 0
+
+            for row in reader:
+                recipe = RecipeData(row[0], row[10][1:-1].replace("'", "").split(', '), row[8][1:-1].replace("'", "").split(', '), row[9])
+                ingredients = recipe.ingredients
+                self.completed += 1
+                for ingredient in ingredients:
+                    remaining = ingredients[:]
+                    remaining.remove(ingredient)
+                    for ingredient_to in remaining:
+                        self.nodes[ingredient].setdefault(ingredient_to, set()).add(recipe)
 
     def all_recipes_with(self, ingredient):
         links = self.nodes[ingredient]
