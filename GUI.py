@@ -106,8 +106,22 @@ def find_recipies():
 
 root = ttkb.Window(themename="superhero")
 root.title("Recipe Pantry")
+
+# Get the screen width and height
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+# Set the window size as a fraction of the screen size
+window_width = int(screen_width * 0.8)  # 80% of screen width
+window_height = int(screen_height * 0.6)  # 60% of screen height
+
+# Center the window on the screen
+x_position = (screen_width - window_width) // 2
+y_position = (screen_height - window_height) // 2
+
+
 root.iconbitmap('images/favicon.ico')
-root.geometry("950x750")
+root.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
 root.resizable(False, False)
 
 graph = Graph()
