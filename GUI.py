@@ -4,6 +4,7 @@ from splaytree import *
 from ttkbootstrap import ScrolledText
 import ttkbootstrap as ttkb
 from graph import Graph
+import time
 
 # Colors
 # Default, primary, secondary, success, info, warning, danger, light, dark
@@ -197,8 +198,11 @@ def find_recipies():
     for ingredient in my_list_exclude.get(0, END):
         exclude_data.append(ingredient)
     history_exclude.insert(0, exclude_data)
-    if graph_true:
+    if structure_type:
+        start = time.time_ns()
         recipe_list = graph.find_recipes(ingredient_data, exclude_data)
+        end = time.time_ns()
+        #end-start
     else:
         recipe_list = splaytree.find_recipes(ingredient_data, exclude_data)
     update_recipes(recipe_list)
@@ -246,6 +250,12 @@ def show_history():
             paragraph += "\n"
     scroll_history.insert(ttkb.END, paragraph)
 
+def change_type(e):
+    global structure_type
+    if my_combo_type.get() == "Graph":
+        structure_type = True
+    elif my_combo_type.get() == "Splaytree":
+        structure_type = False
 
 
 root = ttkb.Window(themename="superhero")
@@ -255,7 +265,6 @@ root.title("Recipe Pantry")
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 
-print(screen_height)
 # Set the window size as a fraction of the screen size
 window_height = int(screen_height*0.75)
 window_width = int(window_height*1.25)
@@ -263,11 +272,9 @@ window_width = int(window_height*1.25)
 
 root.iconbitmap('images/favicon.ico')
 root.geometry(f"{window_width}x{window_height}")
-print(window_width)
-print(window_height)
 root.resizable(False, False)
 
-graph_true = True
+structure_type = True
 recipe_list = []
 history_include = []
 history_exclude = []
@@ -358,12 +365,12 @@ my_list_recipes = Listbox(root, width=60, font=("helvetica", text_20))
 my_list_recipes.place(relx=.5, rely=.75, anchor=ttkb.CENTER)
 
 # Create combo box
-structures = ["Graph", "Tree"]
-my_comboBox = ttkb.Combobox(root, bootstyle="success", values=structures)
-my_comboBox.place(relx=.9, rely=.05, anchor=ttkb.CENTER)
+structures = ["Graph", "Splaytree"]
+my_combo_type = ttkb.Combobox(root, bootstyle="success", values=structures, state="readonly")
+my_combo_type.place(relx=.9, rely=.05, anchor=ttkb.CENTER)
 
 # Set combo default
-my_comboBox.current(0)
+my_combo_type.current(0)
 
 # create a list of ingredients
 ingredients_list = list(ingredients)
@@ -385,5 +392,8 @@ my_list_recipes.bind("<<ListboxSelect>>", show_recipe)
 
 # create a binding on the entry box
 my_entry.bind("<KeyRelease>", check)
+
+# create a binding on the type box
+my_combo_type.bind("<<ComboboxSelected>>", change_type)
 
 root.mainloop()
