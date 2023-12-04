@@ -77,31 +77,31 @@ def show_recipe(e):
         for recipe in recipe_list:
             if recipe.recipe == selected_item:
                 my_recipe_name = Label(recipe_root, text=f"{recipe.recipe}", wraplength=600,
-                                       font=("helvetica", 28), fg="grey")
+                                       font=("helvetica", text_28), fg="grey")
                 my_recipe_name.place(relx=.5, rely=.1, anchor=ttkb.CENTER)
 
                 my_recipe_desc = Label(recipe_root, text="Recipe Description:",
-                                       font=("helvetica", 18), fg="grey")
-                my_recipe_desc.place(relx=.205, rely=.24, anchor=ttkb.CENTER)
+                                       font=("helvetica", text_18), fg="grey")
+                my_recipe_desc.place(relx=.205, rely=.23, anchor=ttkb.CENTER)
 
                 my_recipe_ingr = Label(recipe_root, text="Recipe Ingredients:",
-                                       font=("helvetica", 18), fg="grey")
-                my_recipe_ingr.place(relx=.705, rely=.24, anchor=ttkb.CENTER)
+                                       font=("helvetica", text_18), fg="grey")
+                my_recipe_ingr.place(relx=.705, rely=.23, anchor=ttkb.CENTER)
 
                 my_recipe_steps = Label(recipe_root, text="Steps:",
-                                       font=("helvetica", 18), fg="grey")
-                my_recipe_steps.place(relx=.11, rely=.575, anchor=ttkb.CENTER)
+                                       font=("helvetica", text_18), fg="grey")
+                my_recipe_steps.place(relx=.11, rely=.565, anchor=ttkb.CENTER)
 
                 scroll_ingr = ScrolledText(recipe_root, wrap=WORD, width=20, height=5,
-                                           font=("Helvetica", 16))
-                scroll_ingr.place(rely=.4, relx=.75, anchor=ttkb.CENTER)
+                                           font=("Helvetica", text_18))
+                scroll_ingr.place(rely=.39, relx=.75, anchor=ttkb.CENTER)
 
                 scroll_desc = ScrolledText(recipe_root, wrap=WORD, width=20, height=5,
-                                           font=("Helvetica", 16))
-                scroll_desc.place(rely=.4, relx=.25, anchor=ttkb.CENTER)
+                                           font=("Helvetica", text_18))
+                scroll_desc.place(rely=.39, relx=.25, anchor=ttkb.CENTER)
 
-                scroll_steps = ScrolledText(recipe_root, wrap=WORD, width=49, height=7,
-                                           font=("Helvetica", 16))
+                scroll_steps = ScrolledText(recipe_root, wrap=WORD, width=47, height=7,
+                                           font=("Helvetica", text_18))
                 scroll_steps.place(rely=.775, relx=.5, anchor=ttkb.CENTER)
 
                 # Your paragraph text
@@ -197,7 +197,10 @@ def find_recipies():
     for ingredient in my_list_exclude.get(0, END):
         exclude_data.append(ingredient)
     history_exclude.insert(0, exclude_data)
-    recipe_list = graph.find_recipes(ingredient_data, exclude_data)
+    if graph_true:
+        recipe_list = graph.find_recipes(ingredient_data, exclude_data)
+    else:
+        recipe_list = splaytree.find_recipes(ingredient_data, exclude_data)
     update_recipes(recipe_list)
 
 def show_history():
@@ -210,13 +213,13 @@ def show_history():
     history_root.iconbitmap('images/favicon.ico')
     history_root.geometry(f"{recipe_window_width}x{recipe_window_height}")
 
-    my_recipe_name = Label(history_root, text="History",
-                           font=("helvetica", 28), fg="grey")
-    my_recipe_name.place(relx=.5, rely=.1, anchor=ttkb.CENTER)
+    my_history_label = Label(history_root, text="History",
+                           font=("helvetica", text_28), fg="grey")
+    my_history_label.place(relx=.5, rely=.1, anchor=ttkb.CENTER)
 
-    scroll_ingr = ScrolledText(history_root, wrap=WORD, width=50, height=15,
-                               font=("Helvetica", 16))
-    scroll_ingr.place(rely=.5, relx=.5, anchor=ttkb.CENTER)
+    scroll_history = ScrolledText(history_root, wrap=WORD, width=50, height=15,
+                               font=("Helvetica", text_18))
+    scroll_history.place(rely=.55, relx=.5, anchor=ttkb.CENTER)
 
     paragraph = ""
     history_log = 0
@@ -241,7 +244,7 @@ def show_history():
         else:
             paragraph += "No Ingredient Exclusions"
             paragraph += "\n"
-    scroll_ingr.insert(ttkb.END, paragraph)
+    scroll_history.insert(ttkb.END, paragraph)
 
 
 
@@ -252,9 +255,11 @@ root.title("Recipe Pantry")
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 
+print(screen_height)
 # Set the window size as a fraction of the screen size
-window_width = 960
-window_height = int(window_width/1.25)
+window_height = int(screen_height*0.75)
+window_width = int(window_height*1.25)
+
 
 root.iconbitmap('images/favicon.ico')
 root.geometry(f"{window_width}x{window_height}")
@@ -262,33 +267,44 @@ print(window_width)
 print(window_height)
 root.resizable(False, False)
 
+graph_true = True
 recipe_list = []
 history_include = []
 history_exclude = []
 
 graph = Graph()
 
-#tree = SplayTree()
+#splaytree = SplayTree()
 
 ingredients = graph.nodes.keys()
 
 my_frame = ttkb.Frame(root, bootstyle="light")
 my_frame.place(x=0, y=0)
 
+
+text_28 = int(window_height*(28/768))
+text_20 = int(window_height*(20/768))
+text_18 = int(window_height*(18/768))
+text_14 = int(window_height*(14/768))
+button_add_scale = int(window_height*(8/768))
+button_remove_scale = int(window_height*(12/768))
+button_exclude_scale = int(window_height*(12/768))
+button_search_scale = int(window_height*(14/768))
+
 # Create a button to add ingredient
-add_button = ttkb.Button(root, text="Add Ingr.", command=add_input)
+add_button = ttkb.Button(root, text="Add Ingr.", width=button_add_scale, command=add_input)
 add_button.place(relx=.545, rely=.15, anchor=ttkb.CENTER)
 
 # Create a button to remove ingredient
-remove_button = ttkb.Button(root, text="Remove Ingr.", command=remove_input)
+remove_button = ttkb.Button(root, text="Remove Ingr.", width=button_remove_scale, command=remove_input)
 remove_button.place(relx=.645, rely=.15, anchor=ttkb.CENTER)
 
-# Create a button to remove ingredient
-remove_button = ttkb.Button(root, text="Exclude Ingr.", command=exclude_input)
+# Create a button to exclude ingredient
+remove_button = ttkb.Button(root, text="Exclude Ingr.", width=button_exclude_scale, command=exclude_input)
 remove_button.place(relx=.755, rely=.15, anchor=ttkb.CENTER)
 
 # Create a button to find recipes
-remove_button = ttkb.Button(root, text="Search Recipes", command=find_recipies)
+remove_button = ttkb.Button(root, text="Search Recipes", width=button_search_scale, command=find_recipies)
 remove_button.place(relx=.915, rely=.15, anchor=ttkb.CENTER)
 
 # Create a button to show history
@@ -296,35 +312,49 @@ remove_button = ttkb.Button(root, text="History", command=show_history)
 remove_button.place(relx=.06, rely=.05, anchor=ttkb.CENTER)
 
 # create a label for project name
-my_label = Label(root, text="Recipe Pantry", font=("helvetica", 28), fg="grey")
+my_label = Label(root, text="Recipe Pantry", font=("helvetica", text_28), fg="grey")
 my_label.place(relx=.5, rely=.05, anchor=ttkb.CENTER)
 
 # create a label for "Search"
-my_label = Label(root, text="Search Pantry:", font=("helvetica", 14), fg="grey")
+my_label = Label(root, text="Search Pantry:", font=("helvetica", text_14), fg="grey")
 my_label.place(relx=.09, rely=.15, anchor=ttkb.CENTER)
 
 # create a label for "Exclude"
-my_label = Label(root, text="Exclude:", font=("helvetica", 14), fg="grey")
-my_label.place(relx=.55, rely=.39, anchor=ttkb.CENTER)
+#my_label = Label(root, text="Include:", font=("helvetica", text_14), fg="grey")
+#my_label.place(relx=.55, rely=.23, anchor=ttkb.CENTER)
+
+# create a label for "Exclude"
+my_label = Label(root, text="Exclude:", font=("helvetica", text_14), fg="grey")
+my_label.place(relx=.55, rely=.35, anchor=ttkb.CENTER)
+
 
 # create an entry box
-my_entry = Entry(root, font=("helvetica", 20), relief=SUNKEN)
+my_entry = Entry(root, font=("helvetica", text_20))
 my_entry.place(relx=.33, rely=.15, anchor=ttkb.CENTER)
 
 # create an ingredient list box
-my_list_ingredients = Listbox(root, width=40, font=("helvetica", 14))
+my_list_ingredients = Listbox(root, width=40, font=("helvetica", text_14))
 my_list_ingredients.place(relx=.26, rely=.35, anchor=ttkb.CENTER)
 
 # create an input list box
-my_list_input = Listbox(root, width=40, font=("helvetica", 14), height=4)
-my_list_input.place(relx=.74, rely=.3, anchor=ttkb.CENTER)
+#my_list_input = Listbox(root, width=40, font=("helvetica", text_14), height=3)
+#my_list_input.place(relx=.74, rely=.3, anchor=ttkb.CENTER)
+
+# create an input list box
+my_list_input = Listbox(root, width=40, font=("helvetica", text_14), height=4)
+my_list_input.place(relx=.74, rely=.261, anchor=ttkb.CENTER)
 
 # create an exclude list box
-my_list_exclude = Listbox(root, width=40, font=("helvetica", 14), height=3)
-my_list_exclude.place(relx=.74, rely=.455, anchor=ttkb.CENTER)
+my_list_exclude = Listbox(root, width=40, font=("helvetica", text_14), height=4)
+my_list_exclude.place(relx=.74, rely=.44, anchor=ttkb.CENTER)
+
+
+# create an exclude list box
+#my_list_exclude = Listbox(root, width=40, font=("helvetica", text_14), height=3)
+#my_list_exclude.place(relx=.74, rely=.455, anchor=ttkb.CENTER)
 
 # create a recipe list box
-my_list_recipes = Listbox(root, width=60, font=("helvetica", 20))
+my_list_recipes = Listbox(root, width=60, font=("helvetica", text_20))
 my_list_recipes.place(relx=.5, rely=.75, anchor=ttkb.CENTER)
 
 # Create combo box
