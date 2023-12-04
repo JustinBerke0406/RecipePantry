@@ -12,6 +12,7 @@ class Node:
         self.parent = None
         self.data = (ingredient, recipes)
 
+
     def __getitem__(self, item):
         return self.data[item]
 
@@ -205,7 +206,7 @@ class SplayTree:
     def all_recipes_with(self, ingredient):
         return self.get_ingredient(ingredient)[1]
 
-    def find_recipes(self, ingredients, exclude):
+    def find_recipes(self, ingredients, exclude=[]):
         common_recipes = []
 
         if len(ingredients) > 0:
@@ -216,19 +217,19 @@ class SplayTree:
             for ingredient in ingredients[1:]:
                 recipes = self.get_ingredient(ingredient)[1]
                 for item in common_recipes:
-                    if item != recipes:
+                    if item not in recipes:
                         common_recipes.remove(item)
 
         if len(exclude) > 0:  # removes excluded recipes with excluded ingredients
             for ingredient in exclude:
                 recipes = self.get_ingredient(ingredient)[1]
                 for item in common_recipes:
-                    if item == recipes:
+                    if item in recipes:
                         common_recipes.remove(item)
 
         return common_recipes
 
-    def find_recipes_partial(self, ingredients, missing, exclude):
+    def find_recipes_partial(self, ingredients, missing=0, exclude=[]):
         common_recipes = []
         if len(ingredients) > 0:
             for number in missing + 1:
@@ -247,3 +248,6 @@ class SplayTree:
 
     # graph.nodes.keys returns list of ingredients
     # recipe name for each ingredient
+
+splaytree = SplayTree()
+print(splaytree.get_ingredient("winter squash")[1])
