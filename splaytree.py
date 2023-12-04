@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-import vector as vector
 import threading
 import dataparser_extra
 import csv
@@ -168,11 +167,11 @@ class SplayTree:
 
     def get_ingredient(self, ingredientName):
         head = self.root
-        while self.root.data[0] != ingredientName:
+        while head.data[0] != ingredientName:
             if head.left and head.right:
-                if ingredientName > head.right.data[0]:
+                if ingredientName > head.data[0]:
                     head = head.right
-                elif ingredientName < head.left.data[0]:
+                elif ingredientName < head.data[0]:
                     head = head.left
             elif head.left:
                 head = head.left
@@ -250,4 +249,4 @@ class SplayTree:
     # recipe name for each ingredient
 
 
-tree = SplayTree()
+splaytree = SplayTree()
