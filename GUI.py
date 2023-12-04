@@ -73,8 +73,6 @@ def show_recipe(e):
         recipe_root.iconbitmap('images/favicon.ico')
         recipe_root.geometry(f"{recipe_window_width}x{recipe_window_height}")
 
-        # typed_length = len(typed)
-
         for recipe in recipe_list:
             if recipe.recipe == selected_item:
                 my_recipe_name = Label(recipe_root, text=f"{recipe.recipe}", wraplength=600,
@@ -158,8 +156,10 @@ def add_input():
     ingredients_data = list(ingredients)
     if input_text.lower() in ingredients_data:
         if input_text.lower() not in my_list_input.get(0, END):
-            if input_text.lower() not in my_list_exclude.get(0, END):
-                my_list_input.insert(0, input_text)
+            my_list_input.insert(0, input_text)
+            if input_text.lower() in my_list_exclude.get(0, END):
+                idx = my_list_exclude.get(0, ttkb.END).index(input_text)
+                my_list_exclude.delete(idx)
 
 
 def remove_input():
@@ -191,11 +191,57 @@ def find_recipies():
     ingredient_data = []
     for ingredient in my_list_input.get(0, END):
         ingredient_data.append(ingredient)
+    history_include.insert(0, ingredient_data)
     exclude_data = []
     for ingredient in my_list_exclude.get(0, END):
         exclude_data.append(ingredient)
+    history_exclude.insert(0, exclude_data)
     recipe_list = graph.find_recipes(ingredient_data, exclude_data)
     update_recipes(recipe_list)
+
+def show_history():
+    history_root = ttkb.Window(themename="superhero")
+    history_root.title("History")
+    # Set the window size as a fraction of the screen size
+    recipe_window_width = int(screen_width * 0.45)
+    recipe_window_height = int(recipe_window_width * .8)
+
+    history_root.iconbitmap('images/favicon.ico')
+    history_root.geometry(f"{recipe_window_width}x{recipe_window_height}")
+
+    my_recipe_name = Label(history_root, text="History",
+                           font=("helvetica", 28), fg="grey")
+    my_recipe_name.place(relx=.5, rely=.1, anchor=ttkb.CENTER)
+
+    scroll_ingr = ScrolledText(history_root, wrap=WORD, width=50, height=15,
+                               font=("Helvetica", 16))
+    scroll_ingr.place(rely=.5, relx=.5, anchor=ttkb.CENTER)
+
+    paragraph = ""
+    history_log = 0
+    for search in history_include:
+        history_log += 1
+        paragraph += f"Insert Log {history_log}: "
+        for ingr in search:
+            paragraph += ingr
+            paragraph += ", "
+        paragraph = paragraph[:-2]
+        paragraph += "\n"
+    history_log = 0
+    for search in history_exclude:
+        history_log += 1
+        paragraph += f"Exclude Log {history_log}: "
+        if search:
+            for ingr in search:
+                paragraph += ingr
+                paragraph += ", "
+            paragraph = paragraph[:-2]
+            paragraph += "\n"
+        else:
+            paragraph += "No Ingredient Exclusions"
+            paragraph += "\n"
+    scroll_ingr.insert(ttkb.END, paragraph)
+
 
 
 root = ttkb.Window(themename="superhero")
@@ -214,6 +260,8 @@ root.geometry(f"{window_width}x{window_height}")
 root.resizable(False, False)
 
 recipe_list = []
+history_include = []
+history_exclude = []
 
 graph = Graph()
 
@@ -237,6 +285,10 @@ remove_button.place(relx=.755, rely=.15, anchor=ttkb.CENTER)
 # Create a button to find recipes
 remove_button = ttkb.Button(root, text="Search Recipes", command=find_recipies)
 remove_button.place(relx=.915, rely=.15, anchor=ttkb.CENTER)
+
+# Create a button to show history
+remove_button = ttkb.Button(root, text="History", command=show_history)
+remove_button.place(relx=.06, rely=.05, anchor=ttkb.CENTER)
 
 # create a label for project name
 my_label = Label(root, text="Recipe Pantry", font=("helvetica", 28), fg="grey")
