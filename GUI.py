@@ -1,5 +1,6 @@
 from tkinter import *
 from ttkbootstrap.constants import *
+from splaytree import *
 from ttkbootstrap import ScrolledText
 import ttkbootstrap as ttkb
 from graph import Graph
@@ -252,11 +253,13 @@ screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 
 # Set the window size as a fraction of the screen size
-window_width = int(screen_width * 0.625)
-window_height = int(window_width * 0.8)
+window_width = 960
+window_height = int(window_width/1.25)
 
 root.iconbitmap('images/favicon.ico')
 root.geometry(f"{window_width}x{window_height}")
+print(window_width)
+print(window_height)
 root.resizable(False, False)
 
 recipe_list = []
@@ -264,6 +267,8 @@ history_include = []
 history_exclude = []
 
 graph = Graph()
+
+#tree = SplayTree()
 
 ingredients = graph.nodes.keys()
 
@@ -300,7 +305,7 @@ my_label.place(relx=.09, rely=.15, anchor=ttkb.CENTER)
 
 # create a label for "Exclude"
 my_label = Label(root, text="Exclude:", font=("helvetica", 14), fg="grey")
-my_label.place(relx=.55, rely=.35, anchor=ttkb.CENTER)
+my_label.place(relx=.55, rely=.39, anchor=ttkb.CENTER)
 
 # create an entry box
 my_entry = Entry(root, font=("helvetica", 20), relief=SUNKEN)
@@ -312,11 +317,11 @@ my_list_ingredients.place(relx=.26, rely=.35, anchor=ttkb.CENTER)
 
 # create an input list box
 my_list_input = Listbox(root, width=40, font=("helvetica", 14), height=4)
-my_list_input.place(relx=.74, rely=.261, anchor=ttkb.CENTER)
+my_list_input.place(relx=.74, rely=.3, anchor=ttkb.CENTER)
 
 # create an exclude list box
-my_list_exclude = Listbox(root, width=40, font=("helvetica", 14), height=4)
-my_list_exclude.place(relx=.74, rely=.44, anchor=ttkb.CENTER)
+my_list_exclude = Listbox(root, width=40, font=("helvetica", 14), height=3)
+my_list_exclude.place(relx=.74, rely=.455, anchor=ttkb.CENTER)
 
 # create a recipe list box
 my_list_recipes = Listbox(root, width=60, font=("helvetica", 20))
