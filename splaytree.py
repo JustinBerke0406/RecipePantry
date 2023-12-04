@@ -210,7 +210,7 @@ class SplayTree:
 
         if len(ingredients) > 0:
             for item in ingredients[0]:
-                common_recipes.append(item)
+                common_recipes.append(self.get_ingredient(item)[1])
 
         if len(ingredients) > 1: # removes recipes that aren't
             for ingredient in ingredients[1:]:
@@ -247,6 +247,3 @@ class SplayTree:
 
     # graph.nodes.keys returns list of ingredients
     # recipe name for each ingredient
-
-
-splaytree = SplayTree()
