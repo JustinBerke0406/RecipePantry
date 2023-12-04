@@ -12,7 +12,6 @@ class Node:
         self.parent = None
         self.data = (ingredient, recipes)
 
-
     def __getitem__(self, item):
         return self.data[item]
 
@@ -28,7 +27,7 @@ class SplayTree:
 
         self.ingredients = defaultdict(list)
 
-        self.thread = threading.Thread(target=self.createSplayTree(), daemon=True)
+        self.thread = threading.Thread(target=self.createSplayTree, daemon=True)
         self.thread.start()
 
     def generate_ingredients(self):
@@ -178,6 +177,8 @@ class SplayTree:
                 head = head.left
             elif head.right:
                 head = head.right
+            else:
+                return "", []
         return head.data
 
     # tree creation
@@ -199,10 +200,6 @@ class SplayTree:
                     else:
                         self.get_ingredient(ingredient)[1].append(recipe)
 
-        # self.pre_order(self.root)
-        # self.in_order(self.root)
-        # self.post_order(self.root)
-
     def all_recipes_with(self, ingredient):
         return self.get_ingredient(ingredient)[1]
 
@@ -210,10 +207,9 @@ class SplayTree:
         common_recipes = []
 
         if len(ingredients) > 0:
-            for item in ingredients[0]:
-                common_recipes.append(self.get_ingredient(item)[1])
+            common_recipes.extend(self.get_ingredient(ingredients[0])[1])
 
-        if len(ingredients) > 1: # removes recipes that aren't
+        if len(ingredients) > 1:  # removes recipes that aren't
             for ingredient in ingredients[1:]:
                 recipes = self.get_ingredient(ingredient)[1]
                 for item in common_recipes:
@@ -229,25 +225,6 @@ class SplayTree:
 
         return common_recipes
 
-    def find_recipes_partial(self, ingredients, missing=0, exclude=[]):
-        common_recipes = []
-        if len(ingredients) > 0:
-            for number in missing + 1:
-                common_recipes = []
-                for item in ingredients[number]:
-                    common_recipes.append(item)
-
-
-
-        num = len(ingredients)
-        number = 0
-        while number < num:
-            pass
-
-        pass
-
-    # graph.nodes.keys returns list of ingredients
-    # recipe name for each ingredient
 
 splaytree = SplayTree()
-print(splaytree.get_ingredient("winter squash")[1])
+print(splaytree.get_ingredient("winter squash"))
