@@ -77,6 +77,7 @@ def show_recipe(e):
 
         for recipe in recipe_list:
             if recipe.recipe == selected_item:
+                # create new window
                 my_recipe_name = Label(recipe_root, text=f"{recipe.recipe}", wraplength=600,
                                        font=("helvetica", text_28), fg="grey")
                 my_recipe_name.place(relx=.5, rely=.1, anchor=ttkb.CENTER)
@@ -198,14 +199,24 @@ def find_recipies():
     for ingredient in my_list_exclude.get(0, END):
         exclude_data.append(ingredient)
     history_exclude.insert(0, exclude_data)
+    # if graph
     if structure_type:
         start = time.time_ns()
         recipe_list = graph.find_recipes(ingredient_data, exclude_data)
         end = time.time_ns()
-        #end-start
+        total_time = end-start
+        display_time(total_time)
+    # if splay tree
     else:
-        recipe_list = splaytree.find_recipes(ingredient_data, exclude_data)
+        start = time.time_ns()
+        recipe_list = splay_tree.find_recipes(ingredient_data, exclude_data)
+        end = time.time_ns()
+        total_time = end - start
+        display_time(total_time)
     update_recipes(recipe_list)
+
+def display_time(total_time):
+    my_time.config(text=f"Time: {total_time}ns")
 
 def show_history():
     history_root = ttkb.Window(themename="superhero")
@@ -254,7 +265,7 @@ def change_type(e):
     global structure_type
     if my_combo_type.get() == "Graph":
         structure_type = True
-    elif my_combo_type.get() == "Splaytree":
+    elif my_combo_type.get() == "SplayTree":
         structure_type = False
 
 
@@ -281,13 +292,12 @@ history_exclude = []
 
 graph = Graph()
 
-#splaytree = SplayTree()
+splay_tree = SplayTree()
 
 ingredients = graph.nodes.keys()
 
 my_frame = ttkb.Frame(root, bootstyle="light")
 my_frame.place(x=0, y=0)
-
 
 text_28 = int(window_height*(28/768))
 text_20 = int(window_height*(20/768))
@@ -327,13 +337,12 @@ my_label = Label(root, text="Search Pantry:", font=("helvetica", text_14), fg="g
 my_label.place(relx=.09, rely=.15, anchor=ttkb.CENTER)
 
 # create a label for "Exclude"
-#my_label = Label(root, text="Include:", font=("helvetica", text_14), fg="grey")
-#my_label.place(relx=.55, rely=.23, anchor=ttkb.CENTER)
-
-# create a label for "Exclude"
 my_label = Label(root, text="Exclude:", font=("helvetica", text_14), fg="grey")
 my_label.place(relx=.55, rely=.35, anchor=ttkb.CENTER)
 
+# create a label for time
+my_time = Label(root, text=f"Time: 0.0ns", font=("helvetica", text_14), fg="grey")
+my_time.place(relx=.975, rely=.52, anchor=ttkb.E)
 
 # create an entry box
 my_entry = Entry(root, font=("helvetica", text_20))
@@ -344,21 +353,12 @@ my_list_ingredients = Listbox(root, width=40, font=("helvetica", text_14))
 my_list_ingredients.place(relx=.26, rely=.35, anchor=ttkb.CENTER)
 
 # create an input list box
-#my_list_input = Listbox(root, width=40, font=("helvetica", text_14), height=3)
-#my_list_input.place(relx=.74, rely=.3, anchor=ttkb.CENTER)
-
-# create an input list box
 my_list_input = Listbox(root, width=40, font=("helvetica", text_14), height=4)
 my_list_input.place(relx=.74, rely=.261, anchor=ttkb.CENTER)
 
 # create an exclude list box
 my_list_exclude = Listbox(root, width=40, font=("helvetica", text_14), height=4)
 my_list_exclude.place(relx=.74, rely=.44, anchor=ttkb.CENTER)
-
-
-# create an exclude list box
-#my_list_exclude = Listbox(root, width=40, font=("helvetica", text_14), height=3)
-#my_list_exclude.place(relx=.74, rely=.455, anchor=ttkb.CENTER)
 
 # create a recipe list box
 my_list_recipes = Listbox(root, width=60, font=("helvetica", text_20))
