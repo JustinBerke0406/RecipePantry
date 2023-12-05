@@ -232,7 +232,7 @@ def show_history():
                            font=("helvetica", text_28), fg="grey")
     my_history_label.place(relx=.5, rely=.1, anchor=ttkb.CENTER)
 
-    scroll_history = ScrolledText(history_root, wrap=WORD, width=50, height=15,
+    scroll_history = ScrolledText(history_root, wrap=WORD, width=50, height=15, state=DISABLED,
                                font=("Helvetica", text_18))
     scroll_history.place(rely=.55, relx=.5, anchor=ttkb.CENTER)
 
