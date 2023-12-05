@@ -224,7 +224,3 @@ class SplayTree:
                         common_recipes.remove(item)
 
         return common_recipes
-
-
-splaytree = SplayTree()
-print(splaytree.get_ingredient("winter squash"))
