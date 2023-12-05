@@ -1,6 +1,6 @@
 # RecipePantry
 
-TO use, run GUI.py
+To use, run GUI.py
 
 The dataset must be in the same directory as all the other classes.
 
