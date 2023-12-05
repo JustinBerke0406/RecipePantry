@@ -6,9 +6,6 @@ import ttkbootstrap as ttkb
 from graph import Graph
 import time
 
-# Colors
-# Default, primary, secondary, success, info, warning, danger, light, dark
-
 
 # update list box
 def update(ingredients_in_list):
@@ -50,6 +47,7 @@ def fillout_input(e):
         selected_item = my_list_input.get(curs_location)
         my_entry.insert(0, selected_item)
 
+
 # update entry box with listbox clicked
 def fillout_exclude(e):
     # delete what is in entry box
@@ -71,10 +69,10 @@ def show_recipe(e):
         # Set the window size as a fraction of the screen size
         recipe_window_width = int(screen_width * 0.45)
         recipe_window_height = int(recipe_window_width * .8)
-
+        # set icon and dimensions
         recipe_root.iconbitmap('images/favicon.ico')
         recipe_root.geometry(f"{recipe_window_width}x{recipe_window_height}")
-
+        # find and display recipe
         for recipe in recipe_list:
             if recipe.recipe == selected_item:
                 # create new window
@@ -106,7 +104,7 @@ def show_recipe(e):
                                            font=("Helvetica", text_18))
                 scroll_steps.place(rely=.775, relx=.5, anchor=ttkb.CENTER)
 
-                # Your paragraph text
+                # recipe description
                 paragraph = f"{recipe.desc}"
 
                 ingredients = f"{recipe.ingredients}"
@@ -115,7 +113,7 @@ def show_recipe(e):
                 steps = f"{recipe.steps}"
                 steps = steps[1:-1]
 
-                # Insert the paragraph text into the scrolled text widget
+                # Add paragraph text
                 if paragraph:
                     scroll_desc.insert(ttkb.END, paragraph)
                 else:
@@ -137,7 +135,7 @@ def show_recipe(e):
 
 # create function to check entry vs. list box
 def check(e):
-    # grab what was typed
+    # grab what was typed by user
     typed = my_entry.get()
     # typed_length = len(typed)
     new_list = list(ingredients)
@@ -147,15 +145,13 @@ def check(e):
         data = []
         for ingredient in new_list:
             if typed.lower() in ingredient.lower():
-                # if typed.lower() in ingredient.lower()[0:typed_length]:
                 data.append(ingredient)
     update(data)
 
-
+# add input to input and remove from exclude if present
 def add_input():
     # Get the content of the entry
     input_text = my_entry.get()
-    # typed_length = len(typed)
     ingredients_data = list(ingredients)
     if input_text.lower() in ingredients_data:
         if input_text.lower() not in my_list_input.get(0, END):
@@ -164,7 +160,7 @@ def add_input():
                 idx = my_list_exclude.get(0, ttkb.END).index(input_text)
                 my_list_exclude.delete(idx)
 
-
+# remove input from either input or exclude if present
 def remove_input():
     # Get the content of the entry
     input_text = my_entry.get()
@@ -177,6 +173,7 @@ def remove_input():
             idx = my_list_exclude.get(0, ttkb.END).index(input_text)
             my_list_exclude.delete(idx)
 
+# add to exclude
 def exclude_input():
     # Get the content of the entry
     input_text = my_entry.get()
@@ -188,8 +185,8 @@ def exclude_input():
             idx = my_list_input.get(0, ttkb.END).index(input_text)
             my_list_input.delete(idx)
 
+# find and update recipes based on user input
 def find_recipies():
-    # typed_length = len(typed)
     global recipe_list
     ingredient_data = []
     for ingredient in my_list_input.get(0, END):
@@ -215,9 +212,11 @@ def find_recipies():
         display_time(total_time)
     update_recipes(recipe_list)
 
+# display recipe loading time in ns
 def display_time(total_time):
     my_time.config(text=f"Time: {total_time}ns")
 
+# create history window
 def show_history():
     history_root = ttkb.Window(themename="superhero")
     history_root.title("History")
@@ -235,7 +234,7 @@ def show_history():
     scroll_history = ScrolledText(history_root, wrap=WORD, width=50, height=15, state=DISABLED,
                                font=("Helvetica", text_18))
     scroll_history.place(rely=.55, relx=.5, anchor=ttkb.CENTER)
-
+    # get and store history
     paragraph = ""
     history_log = 0
     for search in history_include:
@@ -261,6 +260,7 @@ def show_history():
             paragraph += "\n"
     scroll_history.insert(ttkb.END, paragraph)
 
+# change structure type
 def change_type(e):
     global structure_type
     if my_combo_type.get() == "Graph":
@@ -268,7 +268,7 @@ def change_type(e):
     elif my_combo_type.get() == "SplayTree":
         structure_type = False
 
-
+# create main window
 root = ttkb.Window(themename="superhero")
 root.title("Recipe Pantry")
 
@@ -279,8 +279,6 @@ screen_height = root.winfo_screenheight()
 # Set the window size as a fraction of the screen size
 window_height = int(screen_height*0.75)
 window_width = int(window_height*1.25)
-
-
 root.iconbitmap('images/favicon.ico')
 root.geometry(f"{window_width}x{window_height}")
 root.resizable(False, False)
@@ -291,14 +289,13 @@ history_include = []
 history_exclude = []
 
 graph = Graph()
-
 splay_tree = SplayTree()
-
 ingredients = graph.nodes.keys()
 
 my_frame = ttkb.Frame(root, bootstyle="light")
 my_frame.place(x=0, y=0)
 
+# ratios to account for different screen resolutions
 text_28 = int(window_height*(28/768))
 text_20 = int(window_height*(20/768))
 text_18 = int(window_height*(18/768))
